@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:file_picker/file_picker.dart';
@@ -59,27 +60,29 @@ class _ArrangeSlidesPageState extends State<ArrangeSlidesPage>
   void pickImage() async {
     bool playing = player.playing;
     player.pause();
-    FilePickerResult result =
-        await FilePicker.platform.pickFiles(type: FileType.image);
+    FilePickerResult? result =
+        (await FilePicker.platform.pickFiles(type: FileType.image));
+    if (result == null) return;
     if (mapImages.isEmpty)
-      mapImages.putIfAbsent(Duration.zero, () => result.files.single.path);
+      mapImages.putIfAbsent(Duration.zero, () => result.files.single.path!);
     else
-      mapImages.update(player.position, (value) => result.files.single.path,
-          ifAbsent: () => result.files.single.path);
+      mapImages.update(player.position, (value) => result.files.single.path!,
+          ifAbsent: () => result.files.single.path!);
     if (playing) player.play();
     setState(() {});
   }
 
   void loadAudio() async {
-    FilePickerResult result =
-        await FilePicker.platform.pickFiles(type: FileType.audio);
-    audioPath = result.files.single.path;
-    duration = await player.setFilePath(audioPath);
-    await player.setLoopMode(LoopMode.one);
-    positionStream = player.createPositionStream();
-    loaded = true;
-    setState(() {});
-    pickImage();
+    FilePicker.platform.pickFiles(type: FileType.audio).then((result) async {
+      if (result == null) Navigator.of(context).pop();
+      audioPath = (result?.files.single.path)!;
+      duration = await player.setFilePath(audioPath);
+      await player.setLoopMode(LoopMode.one);
+      positionStream = player.createPositionStream();
+      loaded = true;
+      setState(() {});
+      pickImage();
+    });
   }
 
   void saveAsVideo() {

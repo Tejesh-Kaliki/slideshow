@@ -1,10 +1,13 @@
 import 'dart:io';
 
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:just_audio/just_audio.dart';
 
 class ArrangeSlidesPage extends StatefulWidget {

@@ -71,17 +71,13 @@ class _ArrangeSlidesPageState extends State<ArrangeSlidesPage>
   }
 
   void loadAudio() async {
-    try {
-      FilePickerResult result =
-          await FilePicker.platform.pickFiles(type: FileType.audio);
-      audioPath = result.files.single.path;
-      duration = await player.setFilePath(audioPath);
-      await player.setLoopMode(LoopMode.one);
-      positionStream = player.createPositionStream();
-      loaded = true;
-    } catch (e) {
-      error = e.toString();
-    }
+    FilePickerResult result =
+        await FilePicker.platform.pickFiles(type: FileType.audio);
+    audioPath = result.files.single.path;
+    duration = await player.setFilePath(audioPath);
+    await player.setLoopMode(LoopMode.one);
+    positionStream = player.createPositionStream();
+    loaded = true;
     setState(() {});
     pickImage();
   }

@@ -10,7 +10,7 @@ class CreateSlideShowPage extends StatefulWidget {
 class _CreateSlideShowPageState extends State<CreateSlideShowPage> {
   List<Sentence> sentences = [];
   int current = 0;
-  TextEditingController _controller, _textEditingController;
+  late TextEditingController _controller, _textEditingController;
 
   void getName() {
     showDialog(

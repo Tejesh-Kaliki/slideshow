@@ -17,12 +17,12 @@ class _ArrangeSlidesPageState extends State<ArrangeSlidesPage>
     with WidgetsBindingObserver {
   AudioPlayer player = AudioPlayer();
   bool loaded = false;
-  String audioPath;
-  Stream<Duration> positionStream;
+  late String audioPath;
+  late Stream<Duration> positionStream;
   String error = "";
   Map<Duration, String> mapImages = {};
   TextEditingController _controller = TextEditingController();
-  Duration duration;
+  late Duration duration;
 
   Duration getMin(Iterable<Duration> values) {
     Duration least = values.first;
@@ -75,6 +75,7 @@ class _ArrangeSlidesPageState extends State<ArrangeSlidesPage>
       audioPath = result.files.single.path;
       duration = await player.setFilePath(audioPath);
       await player.setLoopMode(LoopMode.one);
+      positionStream = player.createPositionStream();
       loaded = true;
     } catch (e) {
       error = e.toString();
@@ -96,15 +97,14 @@ class _ArrangeSlidesPageState extends State<ArrangeSlidesPage>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance?.addObserver(this);
     loadAudio();
-    positionStream = player.createPositionStream();
   }
 
   @override
   void dispose() {
     super.dispose();
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance?.removeObserver(this);
     player.dispose();
   }
 
@@ -133,7 +133,7 @@ class _ArrangeSlidesPageState extends State<ArrangeSlidesPage>
               mapImages.remove(current);
               if (current == Duration.zero) {
                 Duration least = getMin(mapImages.keys);
-                String temp = mapImages[least];
+                String temp = mapImages[least]!;
                 mapImages.remove(least);
                 mapImages.putIfAbsent(Duration.zero, () => temp);
               }
@@ -155,7 +155,7 @@ class _ArrangeSlidesPageState extends State<ArrangeSlidesPage>
               stream: positionStream,
               builder: (context, snapshot) {
                 if (mapImages.length > 0)
-                  return Image.file(File(mapImages[getCurrent()]));
+                  return Image.file(File(mapImages[getCurrent()]!));
                 return Center(child: Text("Add some images"));
               },
             ),
@@ -169,8 +169,13 @@ class _ArrangeSlidesPageState extends State<ArrangeSlidesPage>
                       Row(
                         children: [
                           IconButton(
-                            onPressed: () => player.seek(max(Duration.zero,
-                                player.position - Duration(seconds: 5))),
+                            onPressed: () {
+                              Duration newPos =
+                                  player.position - Duration(seconds: 5);
+                              newPos > Duration.zero
+                                  ? player.seek(newPos)
+                                  : player.seek(Duration.zero);
+                            },
                             icon: Icon(Icons.fast_rewind_rounded),
                           ),
                           IconButton(

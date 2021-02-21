@@ -78,7 +78,7 @@ class Sentence {
   List<TextBit> textBits = [];
   Map<double, List<ui.Paragraph>> boxParagraphPerScale = {};
   Map<double, ui.Paragraph> paragraphPerScale = {};
-  String rawSentence;
+  late String rawSentence;
 
   Sentence.parseFrom(String text) {
     rawSentence = text;
@@ -108,7 +108,7 @@ class Sentence {
       if (styleMap[key] == currentStyle)
         currentStyle = CustomTextStyle.normal;
       else if (currentStyle == CustomTextStyle.normal)
-        currentStyle = styleMap[key];
+        currentStyle = styleMap[key]!;
       else
         break;
     }
@@ -211,7 +211,7 @@ class MyPainter extends CustomPainter {
     //save to device
     ui.Picture pic = recorder.endRecording();
     ui.Image img = await pic.toImage(1920, 1080);
-    ByteData byteData = await img.toByteData(format: ui.ImageByteFormat.png);
+    ByteData byteData = (await img.toByteData(format: ui.ImageByteFormat.png))!;
     Uint8List byteList = byteData.buffer.asUint8List();
 
     bool hasAccess = await getStorageAccess();
@@ -248,9 +248,9 @@ class MyPainter extends CustomPainter {
   }
 
   static void drawText(Canvas canvas, List<Sentence> sentences,
-      {double boxPadding,
-      Offset offset,
-      double lineWidth,
+      {required double boxPadding,
+      required Offset offset,
+      required double lineWidth,
       double scale = 1.0}) {
     offset *= scale;
     lineWidth *= scale;

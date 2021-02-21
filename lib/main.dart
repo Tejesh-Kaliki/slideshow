@@ -58,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Colors.red[300],
               child: Center(
                 child: Text("Create slides"),
-              ), 
+              ),
             ),
           ),
           InkWell(
